@@ -28,10 +28,27 @@ gulp.task('build-system', function () {
     .pipe(gulp.dest(paths.output + 'system'));
 });
 
+gulp.task('build-es5', function () {
+    var Builder = require('systemjs-builder');
+    var builder = new Builder({transpiler: 'babel'});
+    // console.log(builder)
+    builder.loadConfig('./config.js')
+        .then(function() {
+            builder.buildSFX('./src/exports', paths.output+ 'es5/di.js')
+            .then(function() {
+              console.log('Build complete');
+            })
+            .catch(function(err) {
+              console.log('Build error');
+              console.log(err);
+            });
+        });
+});
+
 gulp.task('build', function(callback) {
   return runSequence(
     'clean',
-    ['build-es6', 'build-commonjs', 'build-amd', 'build-system'],
+    ['build-es5'],
     callback
   );
 });
